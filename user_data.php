@@ -1,23 +1,20 @@
 <?php
 include "koneksi.php";
 
-// Pagination settings
 $hlm = (isset($_POST['hlm'])) ? $_POST['hlm'] : 1;
-$limit = 3;
+$limit = 4;
 $limit_start = ($hlm - 1) * $limit;
 $no = $limit_start + 1;
 
-// Query with LIMIT for pagination
-$sql = "SELECT * FROM article ORDER BY tanggal DESC LIMIT $limit_start, $limit";
+$sql = "SELECT * FROM user ORDER BY id DESC LIMIT $limit_start, $limit";
 $hasil = $conn->query($sql);
 ?>
 <table class="table table-hover">
     <thead class="table-dark">
         <tr>
             <th>No</th>
-            <th class="w-25">Judul</th>
-            <th class="w-75">Isi</th>
-            <th class="w-25">Gambar</th>
+            <th class="w-50">Username</th>
+            <th class="w-25">Foto</th>
             <th class="w-25">Aksi</th>
         </tr>
     </thead>
@@ -26,19 +23,20 @@ $hasil = $conn->query($sql);
         while ($row = $hasil->fetch_assoc()) {
             ?>
             <tr>
-                <td><?= $no++ ?></td>
                 <td>
-                    <strong><?= $row["judul"] ?></strong>
-                    <br>pada : <?= $row["tanggal"] ?>
-                    <br>oleh : <?= $row["username"] ?>
+                    <?= $no++ ?>
                 </td>
-                <td><?= $row["isi"] ?></td>
+                <td>
+                    <strong>
+                        <?= $row["username"] ?>
+                    </strong>
+                </td>
                 <td>
                     <?php
-                    if ($row["gambar"] != '') {
-                        if (file_exists('img/' . $row["gambar"])) {
+                    if (isset($row["foto"]) && $row["foto"] != '') {
+                        if (file_exists('img/' . $row["foto"])) {
                             ?>
-                            <img src="img/<?= $row["gambar"] ?>" width="100">
+                            <img src="img/<?= $row["foto"] ?>" width="100">
                             <?php
                         }
                     }
@@ -56,39 +54,39 @@ $hasil = $conn->query($sql);
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Article</h1>
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit User</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <form method="post" action="" enctype="multipart/form-data">
                                     <div class="modal-body">
                                         <div class="mb-3">
-                                            <label for="formGroupExampleInput" class="form-label">Judul</label>
+                                            <label for="formGroupExampleInput" class="form-label">Username</label>
                                             <input type="hidden" name="id" value="<?= $row["id"] ?>">
-                                            <input type="text" class="form-control" name="judul"
-                                                placeholder="Tuliskan Judul Artikel" value="<?= $row["judul"] ?>" required>
+                                            <input type="text" class="form-control" name="username"
+                                                placeholder="Tuliskan Username" value="<?= $row["username"] ?>" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="floatingTextarea2">Isi</label>
-                                            <textarea class="form-control" placeholder="Tuliskan Isi Artikel" name="isi"
-                                                required><?= $row["isi"] ?></textarea>
+                                            <label for="formGroupExampleInput" class="form-label">Password (Baru)</label>
+                                            <input type="password" class="form-control" name="password"
+                                                placeholder="Tuliskan Password Baru" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="formGroupExampleInput2" class="form-label">Ganti Gambar</label>
-                                            <input type="file" class="form-control" name="gambar">
+                                            <label for="formGroupExampleInput2" class="form-label">Ganti Foto Profil</label>
+                                            <input type="file" class="form-control" name="foto">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="formGroupExampleInput3" class="form-label">Gambar Lama</label>
+                                            <label for="formGroupExampleInput3" class="form-label">Foto Lama</label>
                                             <?php
-                                            if ($row["gambar"] != '') {
-                                                if (file_exists('img/' . $row["gambar"] . '')) {
+                                            if (isset($row["foto"]) && $row["foto"] != '') {
+                                                if (file_exists('img/' . $row["foto"])) {
                                                     ?>
-                                                    <br><img src="img/<?= $row["gambar"] ?>" width="100">
+                                                    <br><img src="img/<?= $row["foto"] ?>" width="100">
                                                     <?php
                                                 }
                                             }
                                             ?>
-                                            <input type="hidden" name="gambar_lama" value="<?= $row["gambar"] ?>">
+                                            <input type="hidden" name="foto_lama" value="<?= isset($row["foto"]) ? $row["foto"] : '' ?>">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -108,7 +106,7 @@ $hasil = $conn->query($sql);
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Konfirmasi Hapus Article</h1>
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Konfirmasi Hapus User</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -116,9 +114,11 @@ $hasil = $conn->query($sql);
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label for="formGroupExampleInput" class="form-label">Yakin akan menghapus
-                                                artikel "<strong><?= $row["judul"] ?></strong>"?</label>
+                                                user "<strong>
+                                                    <?= $row["username"] ?>
+                                                </strong>"?</label>
                                             <input type="hidden" name="id" value="<?= $row["id"] ?>">
-                                            <input type="hidden" name="gambar" value="<?= $row["gambar"] ?>">
+                                            <input type="hidden" name="foto" value="<?= isset($row["foto"]) ? $row["foto"] : '' ?>">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -141,8 +141,7 @@ $hasil = $conn->query($sql);
 </table>
 
 <?php
-// Pagination navigation
-$sql1 = "SELECT * FROM article";
+$sql1 = "SELECT * FROM user";
 $hasil1 = $conn->query($sql1);
 $total_records = $hasil1->num_rows;
 $jumlah_page = ceil($total_records / $limit);
@@ -151,14 +150,12 @@ $jumlah_page = ceil($total_records / $limit);
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         <?php
-        // First Button
         if ($hlm > 1) {
             ?>
             <li class="page-item"><a class="page-link halaman" href="#" id="1">First</a></li>
             <?php
         }
 
-        // Previous Button
         if ($hlm > 1) {
             $prev = $hlm - 1;
             ?>
@@ -166,20 +163,22 @@ $jumlah_page = ceil($total_records / $limit);
             <?php
         }
 
-        // Page Numbers
         for ($i = 1; $i <= $jumlah_page; $i++) {
             if ($i == $hlm) {
                 ?>
-                <li class="page-item active"><a class="page-link halaman" href="#" id="<?= $i ?>"><?= $i ?></a></li>
+                <li class="page-item active"><a class="page-link halaman" href="#" id="<?= $i ?>">
+                        <?= $i ?>
+                    </a></li>
                 <?php
             } else {
                 ?>
-                <li class="page-item"><a class="page-link halaman" href="#" id="<?= $i ?>"><?= $i ?></a></li>
+                <li class="page-item"><a class="page-link halaman" href="#" id="<?= $i ?>">
+                        <?= $i ?>
+                    </a></li>
                 <?php
             }
         }
 
-        // Next Button
         if ($hlm < $jumlah_page) {
             $next = $hlm + 1;
             ?>
@@ -187,7 +186,6 @@ $jumlah_page = ceil($total_records / $limit);
             <?php
         }
 
-        // Last Button
         if ($hlm < $jumlah_page) {
             ?>
             <li class="page-item"><a class="page-link halaman" href="#" id="<?= $jumlah_page ?>">Last</a></li>

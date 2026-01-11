@@ -34,9 +34,9 @@
                             <td>
                                 <?php
                                 if ($row["gambar"] != '') {
-                                    if (file_exists($row["gambar"])) {
+                                    if (file_exists('img/' . $row["gambar"])) {
                                         ?>
-                                        <img src="<?= $row["gambar"] ?>" width="100">
+                                        <img src="img/<?= $row["gambar"] ?>" width="100">
                                         <?php
                                     }
                                 }

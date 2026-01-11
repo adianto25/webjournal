@@ -8,7 +8,7 @@ include "koneksi.php";
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Latihan Bootstrap 23 Oktober 2025</title>
-  <link rel="icon" href="logo.webp" type="image/webp" />
+  <link rel="icon" href="img/logo.webp" type="image/webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -55,7 +55,7 @@ include "koneksi.php";
   <section id="home" class="text-center text-sm-start p-5 bg-light bg-opacity-75 rounded-4 shadow">
     <div class="container">
       <div class="d-sm-flex flex-sm-row-reverse align-items-center">
-        <img src="tni.jpeg" width="500" class="img-fluid mb-3 mb-sm-0 rounded" alt="Banner" />
+        <img src="img/tni.jpeg" width="500" class="img-fluid mb-3 mb-sm-0 rounded" alt="Banner" />
         <div>
           <h1 class="fw-bold display-5 text-danger">
             Latihan CSS Dasar Menggunakan Bootstrap
@@ -86,7 +86,7 @@ include "koneksi.php";
           ?>
           <div class="col">
             <div class="card h-100">
-              <img src="<?= $row["gambar"] ?>" class="card-img-top" alt="..." />
+              <img src="img/<?= $row["gambar"] ?>" class="card-img-top" alt="..." />
               <div class="card-body">
                 <h5 class="card-title"><?= $row["judul"] ?></h5>
                 <p class="card-text">
@@ -113,17 +113,22 @@ include "koneksi.php";
       <h1 class="fw-bold display-4 pb-3 border-bottom border-dark">
         Gallery
       </h1>
-      <div id="carouselExample" class="carousel slide mt-4">
+      <div id="carouselExample" class="carousel slide mt-4" data-bs-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="tniprima.jpg" class="d-block w-100" alt="Gambar 1" />
-          </div>
-          <div class="carousel-item">
-            <img src="tniprima1.jpg" class="d-block w-100" alt="Gambar 2" />
-          </div>
-          <div class="carousel-item">
-            <img src="tniprima2.jpg" class="d-block w-100" alt="Gambar 3" />
-          </div>
+          <?php
+          $sql = "SELECT * FROM gallery ORDER BY tanggal DESC";
+          $hasil = $conn->query($sql);
+          $active = true;
+          while ($row = $hasil->fetch_assoc()) {
+            ?>
+            <div class="carousel-item <?= $active ? 'active' : '' ?>">
+              <img src="img/<?= $row["gambar"] ?>" class="d-block w-100" alt="
+            <?= $row["judul"] ?>" />
+            </div>
+            <?php
+            $active = false;
+          }
+          ?>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
           <span class="carousel-control-prev-icon"></span>
@@ -275,7 +280,7 @@ include "koneksi.php";
       <div class="row align-items-center mt-4">
 
         <div class="col-md-4 text-center">
-          <img src="nanang.JPG" class="rounded-circle img-fluid shadow-sm" alt="Foto Profil"
+          <img src="img/nanang.JPG" class="rounded-circle img-fluid shadow-sm" alt="Foto Profil"
             style="width: 250px; height: 250px; object-fit: cover;">
         </div>
 
